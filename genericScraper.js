@@ -20,13 +20,14 @@ class GenericScraper {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
-  async scrapeWebsite(websiteModule, url) {
+  async scrapeWebsite(websiteModule, url, delayTime) {
     let page = this.pages[url];
 
     if (!page) {
       page = await this.browser.newPage();
       this.pages[url] = page;
       await page.goto(url, { waitUntil: 'networkidle2' });
+      await this.delay(delayTime); // delay after each page load
     }
 
     return await websiteModule.scrape(page);
