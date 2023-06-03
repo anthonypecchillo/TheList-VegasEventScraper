@@ -20,22 +20,29 @@ class GenericScraper {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
-  async scrapeWebsite(websiteModule, url, delayTime) {
+  async scrapeWebsite(websiteModule, url, delayTime, retries = 3) {
     let page = this.pages[url];
 
-    try {
-      if (!page) {
-        page = await this.browser.newPage();
-        this.pages[url] = page;
-        await page.goto(url, { waitUntil: 'networkidle2' });
-        await this.delay(delayTime);
-      }
+    while (retries) {
+      try {
+        if (!page) {
+          page = await this.browser.newPage();
+          this.pages[url] = page;
+          await page.goto(url, { waitUntil: 'networkidle2' });
+          await this.delay(delayTime);
+        }
 
-      return await websiteModule.scrape(page);
-    } catch (err) {
-      console.error(`Error scraping ${url}: ${err}`);
-      return null;
+        return await websiteModule.scrape(page);
+      } catch (err) {
+        console.error(`Error scraping ${url}: ${err}`);
+        retries--;
+        delayTime *= 2; // double the delay time
+        console.log(`Retrying ${url}. Retries left: ${retries}`);
+      }
     }
+
+    console.error(`Failed to scrape ${url} after multiple attempts.`);
+    return null;
   }
 }
 
