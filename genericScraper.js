@@ -46,6 +46,12 @@ class GenericScraper {
     return this.robotsTxtCache[url];
   }
 
+  async handleCaptcha(page) {
+    // Placeholder function to simulate CAPTCHA solving
+    console.log(`Encountered a CAPTCHA at ${page.url()}`);
+    await this.delay(10000); // Wait for 10 seconds
+  }
+
   async scrapeWebsite(websiteModule, url, delayTime = 1000, retries = 3) {
     let page = this.pages[url];
 
@@ -64,6 +70,11 @@ class GenericScraper {
           await page.setUserAgent(new UserAgent().toString());
           this.pages[url] = page;
           await page.goto(url, { waitUntil: 'networkidle2' });
+
+          // Check if there's a CAPTCHA on the page
+          if (await websiteModule.hasCaptcha(page)) {
+            await this.handleCaptcha(page);
+          }
 
           await this.delay(delayTime);
         }
