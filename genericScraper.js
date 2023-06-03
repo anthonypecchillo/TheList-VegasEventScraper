@@ -4,6 +4,7 @@ const RobotsParser = require('robots-parser');
 const axios = require('axios');
 const winston = require('winston');
 
+// Create a logger with Winston.
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.json(),
@@ -21,6 +22,7 @@ class GenericScraper {
     this.robotsTxtCache = {};
   }
 
+  // Initialize Puppeteer browser.
   async init() {
     this.browser = await puppeteer.launch({
       headless: true,
@@ -28,16 +30,19 @@ class GenericScraper {
     });
   }
 
+  // Close Puppeteer browser.
   async close() {
     if (this.browser) {
       await this.browser.close();
     }
   }
 
+  // Delay function for pausing between requests.
   async delay(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
+  // Fetch and parse robots.txt from a website.
   async fetchRobotsTxt(url) {
     if (!this.robotsTxtCache[url]) {
       const robotsTxtUrl = new URL('/robots.txt', url).toString();
@@ -48,11 +53,22 @@ class GenericScraper {
     return this.robotsTxtCache[url];
   }
 
+  // Handle CAPTCHAs by waiting for a fixed amount of time.
   async handleCaptcha(page) {
     logger.warn(`Encountered a CAPTCHA at ${page.url()}`);
-    await this.delay(10000);
+    await this.delay(10000); // Simulate CAPTCHA solving time.
   }
 
+  // Wait for a certain selector to appear on the page.
+  async waitForSelectorOrTimeout(page, selector, timeout = 30000) {
+    try {
+      await page.waitForSelector(selector, { timeout });
+    } catch (error) {
+      logger.warn(`Timeout after waiting ${timeout} ms for selector "${selector}".`);
+    }
+  }
+
+  // Scrape a website using a specific website module.
   async scrapeWebsite(websiteModule, url, delayTime = 1000, retries = 3) {
     let page = this.pages[url];
 
