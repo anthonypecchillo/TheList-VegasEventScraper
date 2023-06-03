@@ -1,0 +1,24 @@
+{
+  "name": "thelist-vegaseventscraper",
+  "version": "1.0.0",
+  "description": "Web-Scraping Tool for TheList.vegas",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anthonypecchillo/TheList-VegasEventScraper.git"
+  },
+  "author": "Anthony Pecchillo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anthonypecchillo/TheList-VegasEventScraper/issues"
+  },
+  "homepage": "https://github.com/anthonypecchillo/TheList-VegasEventScraper#readme",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "dotenv": "^16.1.3",
+    "puppeteer": "^20.5.0"
+  }
+}
