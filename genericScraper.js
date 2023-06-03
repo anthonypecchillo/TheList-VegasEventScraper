@@ -16,6 +16,10 @@ class GenericScraper {
     }
   }
 
+  async delay(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }
+
   async scrapeWebsite(websiteModule, url) {
     let page = this.pages[url];
 
