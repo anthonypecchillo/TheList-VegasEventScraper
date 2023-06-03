@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const UserAgent = require('user-agents');
 
 class GenericScraper {
   constructor() {
@@ -7,7 +8,10 @@ class GenericScraper {
   }
 
   async init() {
-    this.browser = await puppeteer.launch({ headless: true });
+    this.browser = await puppeteer.launch({
+      headless: true,
+      userAgent: new UserAgent().toString(),
+    });
   }
 
   async close() {
@@ -27,6 +31,7 @@ class GenericScraper {
       try {
         if (!page) {
           page = await this.browser.newPage();
+          await page.setUserAgent(new UserAgent().toString());
           this.pages[url] = page;
           await page.goto(url, { waitUntil: 'networkidle2' });
           await this.delay(delayTime);
